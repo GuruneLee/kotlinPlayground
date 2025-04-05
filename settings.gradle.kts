@@ -8,5 +8,5 @@
 rootProject.name = "kotlinPlayground"
 
 include(":shared")
-include(":jpaplayground")
-include(":opt-lock-poc")
+include(":poc-status-pattern")
+include(":poc-lock")
