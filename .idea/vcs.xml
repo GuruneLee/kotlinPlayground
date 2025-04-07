@@ -2,7 +2,5 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/shared" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/springJpaMysql_poc" vcs="Git" />
   </component>
 </project>
