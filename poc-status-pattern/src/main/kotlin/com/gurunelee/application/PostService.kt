@@ -1,4 +1,4 @@
-package com.gurunelee
+package com.gurunelee.application
 
 import com.gurunelee.domain.Post
 import com.gurunelee.domain.PostRepository

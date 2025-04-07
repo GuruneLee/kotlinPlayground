@@ -1,6 +1,7 @@
-package com.gurunelee
+package com.gurunelee.interfaces
 
-import com.gurunelee.domain.Post
+import com.gurunelee.application.PostResponse
+import com.gurunelee.application.PostService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 

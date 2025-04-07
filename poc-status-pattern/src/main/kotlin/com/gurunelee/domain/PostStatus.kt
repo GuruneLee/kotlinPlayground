@@ -5,7 +5,7 @@ import org.springframework.data.repository.CrudRepository
 
 @Entity
 class PostStatus (
-    @MapsId
+    @MapsId("id")
     @ManyToOne
     val post: Post,
 
@@ -14,7 +14,6 @@ class PostStatus (
     val status: PostStatusEnum,
 ) {
     @Id
-    @Column(name = "ID")
     val id: Long = 0L
 }
 

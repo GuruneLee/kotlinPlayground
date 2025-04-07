@@ -1,6 +1,5 @@
-package com.gurunelee
+package com.gurunelee.application
 
-import com.gurunelee.domain.PostRepository
 import org.springframework.boot.CommandLineRunner
 import org.springframework.stereotype.Component
 
