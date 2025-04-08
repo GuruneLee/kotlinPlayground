@@ -14,11 +14,11 @@ class DraftStatusHandler(
 ) : PostStatusHandler {
 
     override fun write(title: String, post: Post) {
-        post.updateTitle(title)
+        post.title = title
     }
 
     override fun publish() {
-        throw IllegalStateException("Post is now published.")
+        return
     }
 
     override fun archive() {
@@ -29,7 +29,7 @@ class DraftStatusHandler(
         when (comment.commentType) {
             CommentType.REVIEW -> throw IllegalStateException("Post is not published yet.")
             CommentType.REPLY -> if (post.comments.any { it.commentType == CommentType.REVIEW }) {
-                post.addComment(comment.comment, comment.commentType)
+                post.comments.add(comment)
             } else {
                 throw IllegalStateException("Post can not have any reply comment without review comment.")
             }
@@ -59,7 +59,7 @@ class PublishedStatusHandler(
 
     override fun addComment(comment: PostComment, post: Post) {
         when (comment.commentType) {
-            CommentType.REVIEW -> post.addComment(comment.comment, comment.commentType)
+            CommentType.REVIEW -> post.comments.add(comment)
             CommentType.REPLY -> throw IllegalStateException("Post can't have any reply comment.")
         }
     }

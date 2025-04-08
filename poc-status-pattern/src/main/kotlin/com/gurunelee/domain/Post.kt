@@ -6,7 +6,7 @@ import org.springframework.data.repository.CrudRepository
 @Entity
 class Post private constructor(
     @Column(name = "TITLE")
-    val title: String,
+    var title: String,
 ) {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
