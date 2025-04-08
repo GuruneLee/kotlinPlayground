@@ -1,6 +1,6 @@
 package com.gurunelee.domain
 
-interface PostStatus {
+interface PostStatusHandler {
     fun write(title: String, post: Post)
     fun publish()
     fun archive()
@@ -9,9 +9,9 @@ interface PostStatus {
     fun getActionPolicy(): PostActionPolicy
 }
 
-class DraftStatus(
+class DraftStatusHandler(
     private val actionPolicy: PostActionPolicy,
-) : PostStatus {
+) : PostStatusHandler {
 
     override fun write(title: String, post: Post) {
         post.updateTitle(title)
@@ -41,9 +41,9 @@ class DraftStatus(
     }
 }
 
-class PublishedStatus(
+class PublishedStatusHandler(
     private val actionPolicy: PostActionPolicy,
-) : PostStatus {
+) : PostStatusHandler {
 
     override fun write(title: String, post: Post) {
         throw IllegalStateException("Post is already published.")
@@ -69,9 +69,9 @@ class PublishedStatus(
     }
 }
 
-class ArchivedStatus(
+class ArchivedStatusHandler(
     private val actionPolicy: PostActionPolicy,
-) : PostStatus {
+) : PostStatusHandler {
 
     override fun write(title: String, post: Post) {
         throw IllegalStateException("Post is already archived.")
@@ -94,10 +94,10 @@ class ArchivedStatus(
     }
 }
 
-fun PostStatusEntity.toStatusHandler(): PostStatus {
+fun PostStatusEntity.toStatusHandler(): PostStatusHandler {
     return when (this.status) {
-        PostStatusEnum.DRAFT -> DraftStatus(DraftPostActionPolicy())
-        PostStatusEnum.PUBLISHED -> PublishedStatus(PublishedPostActionPolicy())
-        PostStatusEnum.ARCHIVED -> ArchivedStatus(ArchivedPostActionPolicy())
+        PostStatusEnum.DRAFT -> DraftStatusHandler(DraftPostActionPolicy())
+        PostStatusEnum.PUBLISHED -> PublishedStatusHandler(PublishedPostActionPolicy())
+        PostStatusEnum.ARCHIVED -> ArchivedStatusHandler(ArchivedPostActionPolicy())
     }
 }

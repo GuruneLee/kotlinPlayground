@@ -3,7 +3,7 @@ package com.gurunelee.application
 import com.gurunelee.domain.CommentType
 import com.gurunelee.domain.Post
 import com.gurunelee.domain.PostRepository
-import com.gurunelee.domain.PostStatus
+import com.gurunelee.domain.PostStatusHandler
 import org.springframework.stereotype.Service
 
 @Service
@@ -45,7 +45,7 @@ class PostService(val postRepository: PostRepository) {
 class PostResponse(
     val postId: Long,
     val comments: List<CommentResponse>,
-    val status: PostStatus,
+    val status: PostStatusHandler,
 )
 
 class CommentResponse(

@@ -21,7 +21,7 @@ class Post private constructor(
     private val status: PostStatusEntity
         get() = _statuses.firstOrNull()
             ?: throw IllegalStateException("PostStatusEnum[${id}] not found")
-    val statusHandler: PostStatus get() = status.toStatusHandler()
+    val statusHandler: PostStatusHandler get() = status.toStatusHandler()
     val currentStatus: PostStatusEnum get() = status.status
 
     fun addComment(comment: String, commentType: CommentType) {
