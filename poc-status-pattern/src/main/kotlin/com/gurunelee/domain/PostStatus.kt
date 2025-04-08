@@ -5,9 +5,12 @@ interface PostStatus {
     fun publish()
     fun archive()
     fun addComment(comment: PostComment, post: Post)
+
+    fun getActionPolicy(): PostActionPolicy
 }
 
 class DraftStatus(
+    private val actionPolicy: PostActionPolicy,
 ) : PostStatus {
 
     override fun write(title: String, post: Post) {
@@ -32,9 +35,14 @@ class DraftStatus(
             }
         }
     }
+
+    override fun getActionPolicy(): PostActionPolicy {
+        return actionPolicy
+    }
 }
 
 class PublishedStatus(
+    private val actionPolicy: PostActionPolicy,
 ) : PostStatus {
 
     override fun write(title: String, post: Post) {
@@ -55,9 +63,14 @@ class PublishedStatus(
             CommentType.REPLY -> throw IllegalStateException("Post can't have any reply comment.")
         }
     }
+
+    override fun getActionPolicy(): PostActionPolicy {
+        return actionPolicy
+    }
 }
 
 class ArchivedStatus(
+    private val actionPolicy: PostActionPolicy,
 ) : PostStatus {
 
     override fun write(title: String, post: Post) {
@@ -75,12 +88,16 @@ class ArchivedStatus(
     override fun addComment(comment: PostComment, post: Post) {
         throw IllegalStateException("Post is already archived.")
     }
+
+    override fun getActionPolicy(): PostActionPolicy {
+        return actionPolicy
+    }
 }
 
 fun PostStatusEntity.toStatusHandler(): PostStatus {
     return when (this.status) {
-        PostStatusEnum.DRAFT -> DraftStatus()
-        PostStatusEnum.PUBLISHED -> PublishedStatus()
-        PostStatusEnum.ARCHIVED -> ArchivedStatus()
+        PostStatusEnum.DRAFT -> DraftStatus(DraftPostActionPolicy())
+        PostStatusEnum.PUBLISHED -> PublishedStatus(PublishedPostActionPolicy())
+        PostStatusEnum.ARCHIVED -> ArchivedStatus(ArchivedPostActionPolicy())
     }
 }
