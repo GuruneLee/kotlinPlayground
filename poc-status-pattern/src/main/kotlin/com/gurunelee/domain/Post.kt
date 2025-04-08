@@ -21,7 +21,7 @@ class Post private constructor(
     private val status: PostStatusEntity
         get() = _statuses.firstOrNull()
             ?: throw IllegalStateException("PostStatusEnum[${id}] not found")
-    val statusHandler: PostStatusHandler get() = status.toStatusHandler()
+    val statusHandler: PostStatusHandler get() = getStatusHandler(status.status)
     val currentStatus: PostStatusEnum get() = status.status
 
     fun addComment(comment: String, commentType: CommentType) {
@@ -29,7 +29,7 @@ class Post private constructor(
             comment = PostComment(
                 post = this,
                 comment = comment,
-                commentType = commentType
+                commentType = commentType,
             ),
             post = this,
         )
@@ -65,4 +65,12 @@ class Post private constructor(
 
 interface PostRepository : CrudRepository<Post, Long> {
 
+}
+
+fun getStatusHandler(status: PostStatusEnum): PostStatusHandler {
+    return when (status) {
+        PostStatusEnum.DRAFT -> DraftStatusHandler(DraftPostActionPolicy())
+        PostStatusEnum.PUBLISHED -> PublishedStatusHandler(PublishedPostActionPolicy())
+        PostStatusEnum.ARCHIVED -> ArchivedStatusHandler(ArchivedPostActionPolicy())
+    }
 }

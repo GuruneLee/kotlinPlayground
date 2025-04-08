@@ -6,7 +6,7 @@ import org.springframework.data.repository.CrudRepository
 @Entity
 @Table(name = "POST_STATUS")
 class PostStatusEntity(
-    @MapsId("id")
+    @MapsId
     @ManyToOne
     val post: Post,
 

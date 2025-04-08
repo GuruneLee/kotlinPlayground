@@ -93,11 +93,3 @@ class ArchivedStatusHandler(
         return actionPolicy
     }
 }
-
-fun PostStatusEntity.toStatusHandler(): PostStatusHandler {
-    return when (this.status) {
-        PostStatusEnum.DRAFT -> DraftStatusHandler(DraftPostActionPolicy())
-        PostStatusEnum.PUBLISHED -> PublishedStatusHandler(PublishedPostActionPolicy())
-        PostStatusEnum.ARCHIVED -> ArchivedStatusHandler(ArchivedPostActionPolicy())
-    }
-}
