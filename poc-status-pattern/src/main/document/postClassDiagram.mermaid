@@ -1,0 +1,113 @@
+---
+config:
+theme: mc
+look: handDrawn
+layout: dagre
+---
+classDiagram
+    direction LR
+    namespace Post_kt {
+        class Post {
+            -Long id
+            -String title
+            -MutableSet comments
+            -MutableSet _statuses
+            +addComment(comment: String, commentType: CommentType)
+            +updateTitle(title: String)
+            +publish()
+            +archive()
+        }
+
+        class PostRepository {
+        }
+	}
+
+    namespace PostStatusEntity_kt {
+	    class PostStatusEntity {
+            -Long id
+            -PostStatusEnum status
+            +updateStatus(status: PostStatusEnum)
+        }
+        class PostStatusEnum {
+            <<enumeration>>
+            DRAFT
+            PUBLISHED
+            ARCHIVED
+            +getCandidateStatus() : Set
+        }
+        class PostStatusRepository {
+        }
+	}
+    namespace PostComment_kt {
+        class PostComment {
+            -Long id
+            -String comment
+            -CommentType commentType
+        }
+        class CommentType {
+            <<enumeration>>
+            REVIEW
+            REPLY
+        }
+        class PostCommentRepository {
+        }
+	}
+    namespace PostStatusHandler_kt {
+        class PostStatusHandler {
+            <<interface>>
+            +write(title: String, post: Post)
+            +publish()
+            +archive()
+            +addComment(comment: PostComment, post: Post)
+            +getActionPolicy() : PostActionPolicy
+        }
+        class DraftStatusHandler {
+        }
+        class PublishedStatusHandler {
+        }
+        class ArchivedStatusHandler {
+        }
+	}
+    Post <.. PostStatusHandler: uses
+    namespace PostActionPolicy_kt {
+        class PostAction {
+            <<enumeration>>
+            WRITE
+            PUBLISH
+            ARCHIVE
+            ADD_COMMENT
+        }
+        class PostActionPolicy {
+            <<interface>>
+            +isActionAvailable(action: PostAction, post: Post, privileges: Set) : Boolean
+        }
+        class DraftPostActionPolicy {
+        }
+        class PublishedPostActionPolicy {
+        }
+        class ArchivedPostActionPolicy {
+        }
+	}
+    PostRepository --> Post
+    PostStatusEntity --> PostStatusEnum
+    PostStatusRepository --> PostStatusEntity
+    PostComment --> CommentType
+    PostCommentRepository --> PostComment
+    Post --> PostStatusHandler: creates
+    PostStatusHandler <|.. DraftStatusHandler
+    PostStatusHandler <|.. PublishedStatusHandler
+    PostStatusHandler <|.. ArchivedStatusHandler
+    PostAction <.. PostActionPolicy
+    PostActionPolicy <|.. DraftPostActionPolicy
+    PostActionPolicy <|.. PublishedPostActionPolicy
+    PostActionPolicy <|.. ArchivedPostActionPolicy
+    Post "0" <--> "*" PostComment : comments
+    Post "1" <--> "1" PostStatusEntity : status
+    DraftStatusHandler --> PostActionPolicy
+    PublishedStatusHandler --> PostActionPolicy
+    ArchivedStatusHandler --> PostActionPolicy
+    PostStatusHandler ..> PostComment
+    PostService --> PostRepository
+    PostService --> PrivilegeService
+    PostController --> PostService
+    PostActionPolicy ..> Post
