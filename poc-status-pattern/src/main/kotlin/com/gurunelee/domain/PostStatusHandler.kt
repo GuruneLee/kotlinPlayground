@@ -1,10 +1,10 @@
 package com.gurunelee.domain
 
 interface PostStatusHandler {
-    fun write(title: String, post: Post)
-    fun publish()
-    fun archive()
-    fun addComment(comment: PostComment, post: Post)
+    fun write(postCommand: PostCommand)
+    fun publish(postCommand: PostCommand)
+    fun archive(postCommand: PostCommand)
+    fun addComment(commentType: CommentType, postCommand: PostCommand)
 
     fun getActionPolicy(): PostActionPolicy
 }
@@ -13,26 +13,22 @@ class DraftStatusHandler(
     private val actionPolicy: PostActionPolicy,
 ) : PostStatusHandler {
 
-    override fun write(title: String, post: Post) {
-        post.title = title
+    override fun write(postCommand: PostCommand) {
+        postCommand.execute()
     }
 
-    override fun publish() {
+    override fun publish(postCommand: PostCommand) {
         return
     }
 
-    override fun archive() {
+    override fun archive(postCommand: PostCommand) {
         throw IllegalStateException("Post can not be archived.")
     }
 
-    override fun addComment(comment: PostComment, post: Post) {
-        when (comment.commentType) {
+    override fun addComment(commentType: CommentType, postCommand: PostCommand) {
+        when (commentType) {
             CommentType.REVIEW -> throw IllegalStateException("Post is not published yet.")
-            CommentType.REPLY -> if (post.comments.any { it.commentType == CommentType.REVIEW }) {
-                post.comments.add(comment)
-            } else {
-                throw IllegalStateException("Post can not have any reply comment without review comment.")
-            }
+            CommentType.REPLY -> postCommand.execute()
         }
     }
 
@@ -45,21 +41,21 @@ class PublishedStatusHandler(
     private val actionPolicy: PostActionPolicy,
 ) : PostStatusHandler {
 
-    override fun write(title: String, post: Post) {
+    override fun write(postCommand: PostCommand) {
         throw IllegalStateException("Post is already published.")
     }
 
-    override fun publish() {
+    override fun publish(postCommand: PostCommand) {
         throw IllegalStateException("Post is already published.")
     }
 
-    override fun archive() {
+    override fun archive(postCommand: PostCommand) {
         return
     }
 
-    override fun addComment(comment: PostComment, post: Post) {
-        when (comment.commentType) {
-            CommentType.REVIEW -> post.comments.add(comment)
+    override fun addComment(commentType: CommentType, postCommand: PostCommand) {
+        when (commentType) {
+            CommentType.REVIEW -> postCommand.execute()
             CommentType.REPLY -> throw IllegalStateException("Post can't have any reply comment.")
         }
     }
@@ -73,19 +69,19 @@ class ArchivedStatusHandler(
     private val actionPolicy: PostActionPolicy,
 ) : PostStatusHandler {
 
-    override fun write(title: String, post: Post) {
+    override fun write(postCommand: PostCommand) {
         throw IllegalStateException("Post is already archived.")
     }
 
-    override fun publish() {
+    override fun publish(postCommand: PostCommand) {
         throw IllegalStateException("Post is already archived.")
     }
 
-    override fun archive() {
+    override fun archive(postCommand: PostCommand) {
         throw IllegalStateException("Post is already archived.")
     }
 
-    override fun addComment(comment: PostComment, post: Post) {
+    override fun addComment(commentType: CommentType, postCommand: PostCommand) {
         throw IllegalStateException("Post is already archived.")
     }
 

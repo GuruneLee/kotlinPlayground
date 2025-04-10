@@ -26,26 +26,22 @@ class Post private constructor(
 
     fun addComment(comment: String, commentType: CommentType) {
         statusHandler.addComment(
-            comment = PostComment(
-                post = this,
-                comment = comment,
-                commentType = commentType,
-            ),
-            post = this,
+            commentType = commentType,
+            postCommand = PostAddCommentCommand(commentType = commentType, post = this, comment = comment),
         )
     }
 
     fun updateTitle(title: String) {
-        statusHandler.write(title, this)
+        statusHandler.write(PostWriteCommand(this, title))
     }
 
     fun publish() {
-        statusHandler.publish()
+        statusHandler.publish(PostPublishCommand(this))
         status.updateStatus(PostStatusEnum.PUBLISHED)
     }
 
     fun archive() {
-        statusHandler.archive()
+        statusHandler.archive(PostArchiveCommand(this))
         status.updateStatus(PostStatusEnum.ARCHIVED)
     }
 
@@ -73,4 +69,10 @@ fun getStatusHandler(status: PostStatusEnum): PostStatusHandler {
         PostStatusEnum.PUBLISHED -> PublishedStatusHandler(PublishedPostActionPolicy())
         PostStatusEnum.ARCHIVED -> ArchivedStatusHandler(ArchivedPostActionPolicy())
     }
+}
+
+fun getPostPredicate(post: Post): PostPredicate {
+    return PostPredicate(
+        canReply = { post.comments.any { it.commentType == CommentType.REPLY } }
+    )
 }

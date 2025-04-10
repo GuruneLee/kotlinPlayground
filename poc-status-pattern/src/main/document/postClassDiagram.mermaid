@@ -5,7 +5,7 @@ look: handDrawn
 layout: dagre
 ---
 classDiagram
-    direction LR
+    direction TB
     namespace Post_kt {
         class Post {
             -Long id
@@ -20,7 +20,7 @@ classDiagram
 
         class PostRepository {
         }
-	}
+    }
 
     namespace PostStatusEntity_kt {
 	    class PostStatusEntity {
@@ -38,6 +38,10 @@ classDiagram
         class PostStatusRepository {
         }
 	}
+    PostStatusEntity --> PostStatusEnum
+    PostStatusRepository --> PostStatusEntity
+    Post "1" <--> "1" PostStatusEntity : status
+
     namespace PostComment_kt {
         class PostComment {
             -Long id
@@ -52,13 +56,17 @@ classDiagram
         class PostCommentRepository {
         }
 	}
+    PostComment --> CommentType
+    PostCommentRepository --> PostComment
+    Post "0" <--> "*" PostComment : comments
+
     namespace PostStatusHandler_kt {
         class PostStatusHandler {
             <<interface>>
-            +write(title: String, post: Post)
-            +publish()
-            +archive()
-            +addComment(comment: PostComment, post: Post)
+            +write(postCommand: PostCommand)
+            +publish(postCommand: PostCommand)
+            +archive(postCommand: PostCommand)
+            +addComment(commentType: CommentType, postCommand: PostCommand)
             +getActionPolicy() : PostActionPolicy
         }
         class DraftStatusHandler {
@@ -67,8 +75,12 @@ classDiagram
         }
         class ArchivedStatusHandler {
         }
-	}
-    Post <.. PostStatusHandler: uses
+    }
+    PostStatusHandler <|.. DraftStatusHandler
+    PostStatusHandler <|.. PublishedStatusHandler
+    PostStatusHandler <|.. ArchivedStatusHandler
+    PostStatusHandler ..> PostComment
+
     namespace PostActionPolicy_kt {
         class PostAction {
             <<enumeration>>
@@ -79,7 +91,7 @@ classDiagram
         }
         class PostActionPolicy {
             <<interface>>
-            +isActionAvailable(action: PostAction, post: Post, privileges: Set) : Boolean
+            +isActionAvailable(action: PostAction, postPredicate: PostPredicate, privileges: Set) : Boolean
         }
         class DraftPostActionPolicy {
         }
@@ -87,27 +99,55 @@ classDiagram
         }
         class ArchivedPostActionPolicy {
         }
+
+        class PostPredicate {
+            -Post post
+            +canReply() : Boolean
+        }
 	}
-    PostRepository --> Post
-    PostStatusEntity --> PostStatusEnum
-    PostStatusRepository --> PostStatusEntity
-    PostComment --> CommentType
-    PostCommentRepository --> PostComment
-    Post --> PostStatusHandler: creates
-    PostStatusHandler <|.. DraftStatusHandler
-    PostStatusHandler <|.. PublishedStatusHandler
-    PostStatusHandler <|.. ArchivedStatusHandler
-    PostAction <.. PostActionPolicy
+	PostActionPolicy ..> PostPredicate
+    PostAction <-- PostActionPolicy
     PostActionPolicy <|.. DraftPostActionPolicy
     PostActionPolicy <|.. PublishedPostActionPolicy
     PostActionPolicy <|.. ArchivedPostActionPolicy
-    Post "0" <--> "*" PostComment : comments
-    Post "1" <--> "1" PostStatusEntity : status
-    DraftStatusHandler --> PostActionPolicy
-    PublishedStatusHandler --> PostActionPolicy
-    ArchivedStatusHandler --> PostActionPolicy
-    PostStatusHandler ..> PostComment
+    PostStatusHandler --> PostActionPolicy
+
+	namespace PostCommand_kt {
+        class PostCommand {
+            <<interface>>
+            +execute()
+        }
+        class PostWriteCommand {
+            -Post post
+            -String title
+            +execute()
+        }
+        class PostPublishCommand {
+            -Post post
+            +execute()
+        }
+        class PostArchiveCommand {
+            -Post post
+            +execute()
+        }
+        class PostAddCommentCommand {
+            -Post post
+            -String comment
+            -CommentType commentType
+            +execute()
+        }
+    }
+    PostCommand <|.. PostWriteCommand
+    PostCommand <|.. PostPublishCommand
+    PostCommand <|.. PostArchiveCommand
+    PostCommand <|.. PostAddCommentCommand
+    PostCommand <.. PostStatusHandler: uses
+    PostCommand "create" <--> "uses" Post
+    PostPredicate <-- Post: "create"
+    PostAddCommentCommand ..> PostComment
+    PostAddCommentCommand ..> CommentType
+
+    PostRepository --> Post
     PostService --> PostRepository
     PostService --> PrivilegeService
     PostController --> PostService
-    PostActionPolicy ..> Post

@@ -1,9 +1,6 @@
 package com.gurunelee.application
 
-import com.gurunelee.domain.Post
-import com.gurunelee.domain.PostAction
-import com.gurunelee.domain.PostRepository
-import com.gurunelee.domain.PostStatusEnum
+import com.gurunelee.domain.*
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import kotlin.jvm.optionals.getOrNull
@@ -67,7 +64,11 @@ class PostService(
                 val policy = this.statusHandler.getActionPolicy()
                 PostActionAvailability(
                     action = action,
-                    available = policy.isActionAvailable(action, this, privilegeService.getPrivileges())
+                    available = policy.isActionAvailable(
+                        action = action,
+                        postPredicate = getPostPredicate(this),
+                        privileges = privilegeService.getPrivileges()
+                    )
                 )
             }.toSet()
         )
