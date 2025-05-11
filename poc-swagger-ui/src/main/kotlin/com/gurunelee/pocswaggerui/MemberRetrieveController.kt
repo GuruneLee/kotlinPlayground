@@ -25,7 +25,9 @@ class MemberRetrieveController {
     }
 
     @PutMapping("/api/users/members/{id}")
+    @Operation(summary = "Update Member")
     fun updateMember(
+        @Parameter(description = "Member ID")
         @PathVariable id: String,
         name: String,
         age: Long,
