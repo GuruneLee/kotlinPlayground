@@ -10,3 +10,4 @@ rootProject.name = "kotlinPlayground"
 include(":shared")
 include(":poc-status-pattern")
 include(":poc-lock")
+include(":poc-swagger-ui")
