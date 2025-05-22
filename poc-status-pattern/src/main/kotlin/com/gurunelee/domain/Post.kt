@@ -2,6 +2,7 @@ package com.gurunelee.domain
 
 import jakarta.persistence.*
 import org.springframework.data.repository.CrudRepository
+import org.springframework.stereotype.Repository
 
 @Entity
 class Post private constructor(
@@ -59,6 +60,7 @@ class Post private constructor(
     }
 }
 
+@Repository
 interface PostRepository : CrudRepository<Post, Long> {
 
 }

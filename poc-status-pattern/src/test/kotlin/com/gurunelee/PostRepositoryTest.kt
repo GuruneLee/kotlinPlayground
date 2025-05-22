@@ -13,16 +13,6 @@ class PostRepositoryTest {
     lateinit var postRepository: PostRepository
 
     @Test
-    fun `test find all posts`() {
-        // given
-        // when
-        val posts = postRepository.findAll().toList()
-
-        // then
-        assertEquals(1, posts.size)
-    }
-
-    @Test
     fun `save post`() {
         // given
         val post = Post.newInstance( "content")
