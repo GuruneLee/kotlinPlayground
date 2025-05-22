@@ -1,0 +1,11 @@
+ifndef::snippets[]
+:snippets: ./build/generated-snippets
+endif::[]
+
+include::{snippets}/retrieve-members/http-request.adoc[]
+
+include::{snippets}/retrieve-members/http-response.adoc[]
+
+include::{snippets}/retrieve-members/path-parameters.adoc[]
+
+include::{snippets}/retrieve-members/path-parameters.adoc[]

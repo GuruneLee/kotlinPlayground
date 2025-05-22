@@ -1,3 +1,5 @@
+import org.asciidoctor.gradle.jvm.AsciidoctorTask
+
 plugins {
     kotlin("jvm") version "2.1.0"
     kotlin("plugin.spring") version "1.9.25"
@@ -6,7 +8,8 @@ plugins {
     id("org.asciidoctor.jvm.convert") version "3.3.2"
 }
 
-val asciidoctorExt = configurations.create("asciidoctorExt")
+//val asciidoctorExt = configurations.create("asciidoctorExt")
+val asciidoctorExtensions by configurations.creating
 
 group = "com.gurunelee"
 version = "0.0.1-SNAPSHOT"
@@ -34,7 +37,7 @@ dependencies {
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
-    asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
+//    asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
 }
 
 kotlin {
@@ -55,10 +58,11 @@ tasks.test {
 
 tasks.asciidoctor {
     dependsOn(tasks.test)
-    inputs.dir(snippetsDir)
-    configurations(asciidoctorExt.name)
+    configurations(asciidoctorExtensions)
+    setSourceDir("src/docs/asciidocs")
+    setOutputDir("build/docs/asciidocs")
 }
-//
+
 //tasks.bootJar {
 //    dependsOn(tasks.asciidoctor)
 //    from("${tasks.asciidoctor.get().outputDir}/html5") {
