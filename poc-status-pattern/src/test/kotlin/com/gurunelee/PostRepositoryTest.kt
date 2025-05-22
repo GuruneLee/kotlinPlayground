@@ -25,10 +25,7 @@ class PostRepositoryTest {
     @Test
     fun `save post`() {
         // given
-        val post = Post.newInstance( "content").apply {
-            this.addComment("comment1", CommentType.REVIEW)
-            this.addComment("comment2", CommentType.REVIEW)
-        }
+        val post = Post.newInstance( "content")
 
         // when
         val savedPost = postRepository.save(post)
