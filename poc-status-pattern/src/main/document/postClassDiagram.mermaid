@@ -1,0 +1,153 @@
+---
+config:
+theme: mc
+look: handDrawn
+layout: dagre
+---
+classDiagram
+    direction TB
+    namespace Post_kt {
+        class Post {
+            -Long id
+            -String title
+            -MutableSet comments
+            -MutableSet _statuses
+            +addComment(comment: String, commentType: CommentType)
+            +updateTitle(title: String)
+            +publish()
+            +archive()
+        }
+
+        class PostRepository {
+        }
+    }
+
+    namespace PostStatusEntity_kt {
+	    class PostStatusEntity {
+            -Long id
+            -PostStatusEnum status
+            +updateStatus(status: PostStatusEnum)
+        }
+        class PostStatusEnum {
+            <<enumeration>>
+            DRAFT
+            PUBLISHED
+            ARCHIVED
+            +getCandidateStatus() : Set
+        }
+        class PostStatusRepository {
+        }
+	}
+    PostStatusEntity --> PostStatusEnum
+    PostStatusRepository --> PostStatusEntity
+    Post "1" <--> "1" PostStatusEntity : status
+
+    namespace PostComment_kt {
+        class PostComment {
+            -Long id
+            -String comment
+            -CommentType commentType
+        }
+        class CommentType {
+            <<enumeration>>
+            REVIEW
+            REPLY
+        }
+        class PostCommentRepository {
+        }
+	}
+    PostComment --> CommentType
+    PostCommentRepository --> PostComment
+    Post "0" <--> "*" PostComment : comments
+
+    namespace PostStatusHandler_kt {
+        class PostStatusHandler {
+            <<interface>>
+            +write(postCommand: PostCommand)
+            +publish(postCommand: PostCommand)
+            +archive(postCommand: PostCommand)
+            +addComment(commentType: CommentType, postCommand: PostCommand)
+            +getActionPolicy() : PostActionPolicy
+        }
+        class DraftStatusHandler {
+        }
+        class PublishedStatusHandler {
+        }
+        class ArchivedStatusHandler {
+        }
+    }
+    PostStatusHandler <|.. DraftStatusHandler
+    PostStatusHandler <|.. PublishedStatusHandler
+    PostStatusHandler <|.. ArchivedStatusHandler
+    PostStatusHandler ..> PostComment
+
+    namespace PostActionPolicy_kt {
+        class PostAction {
+            <<enumeration>>
+            WRITE
+            PUBLISH
+            ARCHIVE
+            ADD_COMMENT
+        }
+        class PostActionPolicy {
+            <<interface>>
+            +isActionAvailable(action: PostAction, postPredicate: PostPredicate, privileges: Set) : Boolean
+        }
+        class DraftPostActionPolicy {
+        }
+        class PublishedPostActionPolicy {
+        }
+        class ArchivedPostActionPolicy {
+        }
+
+        class PostPredicate {
+            -Post post
+            +canReply() : Boolean
+        }
+	}
+	PostActionPolicy ..> PostPredicate
+    PostAction <-- PostActionPolicy
+    PostActionPolicy <|.. DraftPostActionPolicy
+    PostActionPolicy <|.. PublishedPostActionPolicy
+    PostActionPolicy <|.. ArchivedPostActionPolicy
+    PostStatusHandler --> PostActionPolicy
+
+	namespace PostCommand_kt {
+        class PostCommand {
+            <<interface>>
+            +execute()
+        }
+        class PostWriteCommand {
+            -Post post
+            -String title
+            +execute()
+        }
+        class PostPublishCommand {
+            -Post post
+            +execute()
+        }
+        class PostArchiveCommand {
+            -Post post
+            +execute()
+        }
+        class PostAddCommentCommand {
+            -Post post
+            -String comment
+            -CommentType commentType
+            +execute()
+        }
+    }
+    PostCommand <|.. PostWriteCommand
+    PostCommand <|.. PostPublishCommand
+    PostCommand <|.. PostArchiveCommand
+    PostCommand <|.. PostAddCommentCommand
+    PostCommand <.. PostStatusHandler: uses
+    PostCommand "create" <--> "uses" Post
+    PostPredicate <-- Post: "create"
+    PostAddCommentCommand ..> PostComment
+    PostAddCommentCommand ..> CommentType
+
+    PostRepository --> Post
+    PostService --> PostRepository
+    PostService --> PrivilegeService
+    PostController --> PostService

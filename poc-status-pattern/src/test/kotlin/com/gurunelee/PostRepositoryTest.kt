@@ -1,9 +1,6 @@
 package com.gurunelee
 
-import com.gurunelee.domain.Post
-import com.gurunelee.domain.PostComment
-import com.gurunelee.domain.PostRepository
-import com.gurunelee.domain.PostStatusEnum
+import com.gurunelee.domain.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -28,11 +25,7 @@ class PostRepositoryTest {
     @Test
     fun `save post`() {
         // given
-        val post = Post( "content").apply {
-            this.addStatus(PostStatusEnum.DRAFT)
-            this.addComment("comment1")
-            this.addComment("comment2")
-        }
+        val post = Post.newInstance( "content")
 
         // when
         val savedPost = postRepository.save(post)
