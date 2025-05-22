@@ -6,6 +6,8 @@ plugins {
     id("org.asciidoctor.jvm.convert") version "3.3.2"
 }
 
+val asciidoctorExt = configurations.create("asciidoctorExt")
+
 group = "com.gurunelee"
 version = "0.0.1-SNAPSHOT"
 
@@ -18,8 +20,6 @@ java {
 repositories {
     mavenCentral()
 }
-
-extra["snippetsDir"] = file("build/generated-snippets")
 
 dependencies {
     implementation(project(":shared"))
@@ -34,6 +34,8 @@ dependencies {
     testImplementation("com.ninja-squad:springmockk:4.0.2")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+    asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
 }
 
 kotlin {
@@ -46,11 +48,21 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
+val snippetsDir = file("build/generated-snippets")
+
 tasks.test {
-    outputs.dir(project.extra["snippetsDir"]!!)
+    outputs.dir(snippetsDir)
 }
 
 tasks.asciidoctor {
-    inputs.dir(project.extra["snippetsDir"]!!)
     dependsOn(tasks.test)
+    inputs.dir(snippetsDir)
+    configurations(asciidoctorExt.name)
 }
+//
+//tasks.bootJar {
+//    dependsOn(tasks.asciidoctor)
+//    from("${tasks.asciidoctor.get().outputDir}/html5") {
+//        into("static/docs")
+//    }
+//}
