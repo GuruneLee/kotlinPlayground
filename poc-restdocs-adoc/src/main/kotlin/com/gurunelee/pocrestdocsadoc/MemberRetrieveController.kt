@@ -1,7 +1,7 @@
 package com.gurunelee.pocrestdocsadoc
 
-import com.gurunelee.common.dto.MemberResponse
 import com.gurunelee.pocrestdocsadoc.application.MemberRetrieveService
+import com.gurunelee.pocrestdocsadoc.common.dto.MemberResponse
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RestController

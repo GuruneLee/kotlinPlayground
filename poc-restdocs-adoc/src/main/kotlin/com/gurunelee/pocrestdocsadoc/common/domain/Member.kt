@@ -1,4 +1,4 @@
-package com.gurunelee.common.domain
+package com.gurunelee.pocrestdocsadoc.common.domain
 
 /**
  * Created by chlee on 5/22/25.

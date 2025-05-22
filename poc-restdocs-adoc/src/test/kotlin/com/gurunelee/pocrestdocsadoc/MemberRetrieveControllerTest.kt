@@ -1,8 +1,8 @@
 package com.gurunelee.pocrestdocsadoc
 
-import com.gurunelee.common.domain.Member
-import com.gurunelee.common.dto.MemberResponse
 import com.gurunelee.pocrestdocsadoc.application.MemberRetrieveService
+import com.gurunelee.pocrestdocsadoc.common.domain.Member
+import com.gurunelee.pocrestdocsadoc.common.dto.MemberResponse
 import com.ninjasquad.springmockk.MockkBean
 import io.mockk.every
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat

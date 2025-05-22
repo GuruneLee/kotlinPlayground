@@ -1,6 +1,7 @@
-package com.gurunelee.common.dto
+package com.gurunelee.pocrestdocsadoc.common.dto
 
-import com.gurunelee.common.domain.Member
+import com.gurunelee.pocrestdocsadoc.common.domain.Member
+
 
 /**
  * Created by chlee on 5/22/25.

@@ -1,7 +1,7 @@
 package com.gurunelee.pocrestdocsadoc.application
 
-import com.gurunelee.common.domain.Member
-import com.gurunelee.common.dto.MemberResponse
+import com.gurunelee.pocrestdocsadoc.common.domain.Member
+import com.gurunelee.pocrestdocsadoc.common.dto.MemberResponse
 import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
 
