@@ -12,8 +12,8 @@ data class MemberResponse (
     val members: List<Member>
 ) {
     companion object {
-        fun one(name: String, age: Long): MemberResponse {
-            return MemberResponse(listOf(Member(null, name, age)))
+        fun singleList(member: Member): MemberResponse {
+            return MemberResponse(listOf(member))
         }
     }
 }
