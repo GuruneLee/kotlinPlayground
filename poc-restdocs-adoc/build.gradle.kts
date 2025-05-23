@@ -64,9 +64,9 @@ tasks.asciidoctor {
     configurations("asciidoctorExt")
 }
 
-//tasks.bootJar {
-//    dependsOn(tasks.asciidoctor)
-//    from("${tasks.asciidoctor.get().outputDir}/html5") {
-//        into("static/docs")
-//    }
-//}
+tasks.bootJar {
+    dependsOn(tasks.asciidoctor)
+    from("${tasks.asciidoctor.get().outputDir}") {
+        into("BOOT-INF/classes/static/docs")
+    }
+}
