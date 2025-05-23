@@ -70,3 +70,11 @@ tasks.bootJar {
         into("BOOT-INF/classes/static/docs")
     }
 }
+
+tasks.bootRun {
+    dependsOn(tasks.asciidoctor)
+    copy {
+        from("${tasks.asciidoctor.get().outputDir}")
+        into("src/main/resources/static/docs")
+    }
+}
