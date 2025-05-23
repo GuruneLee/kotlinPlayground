@@ -56,11 +56,15 @@ tasks.test {
     outputs.dir(snippetsDir)
 }
 
+/**
+ * asciidoctor 의 sourceDir, outputDir 의 기본값은 'src/docs/asciidoc', 'build/docs/asciidoc' 이다.
+ * dir 변경을 위해선 setSourceDir, setOutputDir를 사용해야 한다.
+ * 
+ * @see org.asciidoctor.gradle.jvm.AsciidoctorTask
+ */
 tasks.asciidoctor {
     dependsOn(tasks.test)
     configurations(asciidoctorExtensions)
-    setSourceDir("src/docs/asciidocs")
-    setOutputDir("build/docs/asciidocs")
 }
 
 //tasks.bootJar {
