@@ -1,17 +1,30 @@
 package com.gurunelee;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import com.gurunelee.application.SpeedometerFactory;
+import com.gurunelee.application.UrlSpeedometer;
+
+import java.util.Arrays;
+
 public class Main {
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+        Arrays.stream(args).filter((arg) -> arg.startsWith("-Dlevel="))
+                .forEach((arg) -> {
+                    String level = arg.substring("-Dlevel=".length());
+                    System.setProperty("level", level);
+                    System.out.println("Log level set to: " + level);
+                });
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
-        }
+        UrlSpeedometer urlSpeedometer = SpeedometerFactory.newInstance();
+        String[] urls = {
+                "https://www.google.com",
+                "https://www.github.com",
+                "https://www.stackoverflow.com"
+        };
+
+        Long totalTime = urlSpeedometer.startAndMeasure(urls);
+        urlSpeedometer.getResponseTimes().forEach((url, responseTime) ->
+            System.out.println("URL: " + url + ", Response Time: " + responseTime + " ms")
+        );
+        System.out.println("Total Time: " + totalTime + " ms");
     }
 }
