@@ -1,5 +1,3 @@
-import org.asciidoctor.gradle.jvm.AsciidoctorTask
-
 plugins {
     kotlin("jvm") version "2.1.0"
     kotlin("plugin.spring") version "1.9.25"
@@ -8,8 +6,7 @@ plugins {
     id("org.asciidoctor.jvm.convert") version "3.3.2"
 }
 
-//val asciidoctorExt = configurations.create("asciidoctorExt")
-val asciidoctorExtensions by configurations.creating
+configurations.create("asciidoctorExt")
 
 group = "com.gurunelee"
 version = "0.0.1-SNAPSHOT"
@@ -37,7 +34,7 @@ dependencies {
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
-//    asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
+    "asciidoctorExt"("org.springframework.restdocs:spring-restdocs-asciidoctor")
 }
 
 kotlin {
@@ -56,16 +53,28 @@ tasks.test {
     outputs.dir(snippetsDir)
 }
 
+/**
+ * asciidoctor 의 sourceDir, outputDir 의 기본값은 'src/docs/asciidoc', 'build/docs/asciidoc' 이다.
+ * dir 변경을 위해선 setSourceDir, setOutputDir를 사용해야 한다.
+ *
+ * @see org.asciidoctor.gradle.jvm.AsciidoctorTask
+ */
 tasks.asciidoctor {
     dependsOn(tasks.test)
-    configurations(asciidoctorExtensions)
-    setSourceDir("src/docs/asciidocs")
-    setOutputDir("build/docs/asciidocs")
+    configurations("asciidoctorExt")
 }
 
-//tasks.bootJar {
-//    dependsOn(tasks.asciidoctor)
-//    from("${tasks.asciidoctor.get().outputDir}/html5") {
-//        into("static/docs")
-//    }
-//}
+tasks.bootJar {
+    dependsOn(tasks.asciidoctor)
+    from("${tasks.asciidoctor.get().outputDir}") {
+        into("BOOT-INF/classes/static/docs")
+    }
+}
+
+tasks.bootRun {
+    dependsOn(tasks.asciidoctor)
+    copy {
+        from("${tasks.asciidoctor.get().outputDir}")
+        into("src/main/resources/static/docs")
+    }
+}
