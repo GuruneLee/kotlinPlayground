@@ -2,6 +2,7 @@ package com.gurunelee;
 
 import com.gurunelee.application.SpeedometerFactory;
 import com.gurunelee.application.UrlSpeedometer;
+import com.gurunelee.application.speedometerimpl.SpeedResult;
 
 import java.util.Arrays;
 
@@ -21,10 +22,8 @@ public class Main {
                 "https://www.stackoverflow.com"
         };
 
-        Long totalTime = urlSpeedometer.startAndMeasure(urls);
-        urlSpeedometer.getResponseTimes().forEach((url, responseTime) ->
-            System.out.println("URL: " + url + ", Response Time: " + responseTime + " ms")
-        );
-        System.out.println("Total Time: " + totalTime + " ms");
+        urlSpeedometer.setUrls(urls);
+        SpeedResult result = urlSpeedometer.getResponseTimesAsync();
+        System.out.println("Total Time: " + result.measurementTime() + " ms");
     }
 }
